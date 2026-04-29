@@ -1,3 +1,11 @@
+## 1.0.2
+
+- Fix: JSON tree viewer right-side overflow on deeply nested objects
+- Fix: Console logging now uses `debugPrint` instead of `developer.log` for reliable output in all IDEs
+- Removed compounding left padding in nested children
+- Expandable headers now constrain within available width
+- Long key names gracefully truncate with ellipsis
+
 ## 1.0.1
 
 - Fix: Clipboard doesn't sync on iOS simulator — copied text is now logged to the debug console

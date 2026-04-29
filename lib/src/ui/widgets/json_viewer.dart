@@ -181,18 +181,15 @@ class _JsonNodeState extends State<_JsonNode> {
       }
     }
 
-    return Padding(
-      padding: EdgeInsets.only(left: (widget.depth + 1) * 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...children,
-          _ClosingBracket(
-            bracket: _bracketClose,
-            depth: widget.depth,
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...children,
+        _ClosingBracket(
+          bracket: _bracketClose,
+          depth: widget.depth,
+        ),
+      ],
     );
   }
 
@@ -239,7 +236,6 @@ class _ExpandableHeader extends StatelessWidget {
           right: 8,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               expanded ? Icons.expand_more : Icons.chevron_right,
@@ -248,12 +244,15 @@ class _ExpandableHeader extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             if (keyName != null) ...[
-              Text(
-                '"$keyName"',
-                style: const TextStyle(
-                  color: Color(0xFF79C0FF),
-                  fontFamily: 'monospace',
-                  fontSize: 12,
+              Flexible(
+                child: Text(
+                  '"$keyName"',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF79C0FF),
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                  ),
                 ),
               ),
               const Text(
@@ -346,15 +345,12 @@ class _LeafNode extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (keyName != null) ...[
-              Flexible(
-                flex: 0,
-                child: Text(
-                  '"$keyName"',
-                  style: const TextStyle(
-                    color: Color(0xFF79C0FF),
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                  ),
+              Text(
+                '"$keyName"',
+                style: const TextStyle(
+                  color: Color(0xFF79C0FF),
+                  fontFamily: 'monospace',
+                  fontSize: 12,
                 ),
               ),
               const Text(
@@ -398,7 +394,7 @@ class _ClosingBracket extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
+      padding: EdgeInsets.only(left: (depth + 1) * 16.0, bottom: 2),
       child: Text(
         bracket,
         style: const TextStyle(

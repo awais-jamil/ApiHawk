@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +19,16 @@ class CopyHelper {
   }) async {
     await Clipboard.setData(ClipboardData(text: text));
 
-    // In debug mode, log to console so devs can copy from IDE terminal
+    // In debug mode, print to console so devs can copy from IDE terminal
     // when the simulator clipboard doesn't sync to macOS.
     if (kDebugMode) {
-      developer.log(
-        '\n══════ API Hawk: $label ══════\n$text\n══════════════════════════════',
-        name: 'api_hawk',
-      );
+      // Using debugPrint (not developer.log) ensures output is always
+      // visible in the IDE console and `flutter run` terminal.
+      debugPrint('');
+      debugPrint('══════ API Hawk: $label ══════');
+      debugPrint(text);
+      debugPrint('══════════════════════════════');
+      debugPrint('');
     }
 
     if (!context.mounted) return;
