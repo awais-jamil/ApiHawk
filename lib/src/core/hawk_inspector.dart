@@ -42,7 +42,11 @@ import 'package:http/http.dart' as http;
 class HawkInspector {
   HawkInspector({
     int maxCalls = 200,
+    this.navigatorKey,
   }) : _store = HawkStore(maxCalls: maxCalls);
+
+  /// Optional navigator key for pushing the inspector from overlay contexts.
+  final GlobalKey<NavigatorState>? navigatorKey;
 
   final HawkStore _store;
   late final HawkDioInterceptor _dioInterceptor =
@@ -207,8 +211,16 @@ class HawkInspector {
   HawkStore get store => _store;
 
   /// Opens the Hawk inspector screen as a full-screen modal route.
-  void show(BuildContext context) {
-    Navigator.of(context).push(
+  ///
+  /// Uses [navigatorKey] if provided, otherwise falls back to
+  /// [Navigator.of] with the given [context].
+  void show([BuildContext? context]) {
+    final navigator = navigatorKey?.currentState ??
+        (context != null ? Navigator.of(context) : null);
+
+    if (navigator == null) return;
+
+    navigator.push(
       MaterialPageRoute<void>(
         builder: (_) => HawkInspectorScreen(store: _store),
       ),
