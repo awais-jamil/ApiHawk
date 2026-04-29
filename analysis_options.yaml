@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    require_trailing_commas: true
+    always_use_package_imports: true
+    prefer_final_locals: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_const_declarations: true
+    avoid_print: true
+    sized_box_for_whitespace: true
+    use_decorated_box: true
