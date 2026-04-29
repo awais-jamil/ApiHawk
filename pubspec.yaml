@@ -1,12 +1,17 @@
 name: api_hawk
-description: >
-  A beautiful, lightweight HTTP inspector for Flutter.
-  Inspect Dio requests with a modern Material 3 UI,
-  granular copy options, and zero bloat.
-version: 0.1.0
+description: >-
+  A lightweight HTTP inspector for Flutter. Built-in support for Dio, http, and
+  Chopper. Granular copy options, collapsible JSON viewer, and quick cURL export.
+version: 1.0.0
 homepage: https://github.com/awais-jamil/ApiHawk
 repository: https://github.com/awais-jamil/ApiHawk
 issue_tracker: https://github.com/awais-jamil/ApiHawk/issues
+topics:
+  - http
+  - inspector
+  - dio
+  - networking
+  - debugging
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
