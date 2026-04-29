@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Fix: Clipboard doesn't sync on iOS simulator — copied text is now logged to the debug console
+- Added "VIEW" action on copy snackbar (debug mode only) to show selectable text in a dialog
+
 ## 1.0.0
 
 - Initial release
