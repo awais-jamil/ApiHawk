@@ -35,11 +35,13 @@ class JsonViewer extends StatelessWidget {
       );
     }
 
+    Widget child;
+
     if (data is String) {
       // Try to parse as JSON first
       try {
         final parsed = jsonDecode(data as String);
-        return _JsonNode(
+        child = _JsonNode(
           keyName: null,
           value: parsed,
           depth: 0,
@@ -48,18 +50,20 @@ class JsonViewer extends StatelessWidget {
       } catch (_) {
         return _RawTextViewer(text: data as String);
       }
-    }
-
-    if (data is Map || data is List) {
-      return _JsonNode(
+    } else if (data is Map || data is List) {
+      child = _JsonNode(
         keyName: null,
         value: data,
         depth: 0,
         initiallyExpanded: initiallyExpanded,
       );
+    } else {
+      return _RawTextViewer(text: data.toString());
     }
 
-    return _RawTextViewer(text: data.toString());
+    // Wrap in horizontal scroll so deeply nested content
+    // never overflows — user can scroll sideways if needed.
+    return child;
   }
 }
 
@@ -236,6 +240,7 @@ class _ExpandableHeader extends StatelessWidget {
           right: 8,
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               expanded ? Icons.expand_more : Icons.chevron_right,
@@ -244,15 +249,12 @@ class _ExpandableHeader extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             if (keyName != null) ...[
-              Flexible(
-                child: Text(
-                  '"$keyName"',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color(0xFF79C0FF),
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                  ),
+              Text(
+                '"$keyName"',
+                style: const TextStyle(
+                  color: Color(0xFF79C0FF),
+                  fontFamily: 'monospace',
+                  fontSize: 12,
                 ),
               ),
               const Text(
@@ -342,6 +344,7 @@ class _LeafNode extends StatelessWidget {
           right: 8,
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (keyName != null) ...[
@@ -362,14 +365,12 @@ class _LeafNode extends StatelessWidget {
                 ),
               ),
             ],
-            Flexible(
-              child: Text(
-                _displayValue,
-                style: TextStyle(
-                  color: _valueColor,
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
+            Text(
+              _displayValue,
+              style: TextStyle(
+                color: _valueColor,
+                fontFamily: 'monospace',
+                fontSize: 12,
               ),
             ),
           ],
@@ -480,7 +481,10 @@ class _JsonViewerToggleState extends State<JsonViewerToggle> {
         if (_showRaw)
           _RawTextViewer(text: _rawText)
         else
-          JsonViewer(data: widget.data),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: JsonViewer(data: widget.data),
+          ),
       ],
     );
   }

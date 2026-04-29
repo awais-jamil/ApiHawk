@@ -11,8 +11,8 @@ class HawkHttpRequest {
     this.formDataFiles = const [],
   });
 
-  /// Request headers.
-  final Map<String, dynamic> headers;
+  /// Request headers (mutable — updated in onResponse with final headers).
+  Map<String, dynamic> headers;
 
   /// Request body (may be Map, List, String, FormData, or null).
   final dynamic body;

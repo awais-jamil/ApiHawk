@@ -1,10 +1,10 @@
-## 1.0.2
+## 1.0.3
 
-- Fix: JSON tree viewer right-side overflow on deeply nested objects
-- Fix: Console logging now uses `debugPrint` instead of `developer.log` for reliable output in all IDEs
-- Removed compounding left padding in nested children
-- Expandable headers now constrain within available width
-- Long key names gracefully truncate with ellipsis
+- Fix: JSON tree viewer horizontal overflow on deeply nested objects — now scrollable sideways
+- Fix: Dio interceptor now captures final request headers (auth tokens added by later interceptors)
+- Fix: Console logging uses `dart:io` stdout to bypass `runZonedGuarded` zones
+- Fix: Console log runs before clipboard (prevents silent failure on iOS simulator)
+- Made `HawkHttpRequest.headers` mutable for post-request header updates
 
 ## 1.0.1
 

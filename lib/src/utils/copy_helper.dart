@@ -1,3 +1,4 @@
+import 'dart:io' show stdout;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +18,22 @@ class CopyHelper {
     required String text,
     required String label,
   }) async {
-    await Clipboard.setData(ClipboardData(text: text));
-
-    // In debug mode, print to console so devs can copy from IDE terminal
-    // when the simulator clipboard doesn't sync to macOS.
+    // Log to console FIRST (before clipboard, which can throw on simulator).
+    // Uses dart:io stdout directly to bypass runZonedGuarded / custom zones
+    // that swallow print(), debugPrint(), and developer.log().
+    // Only in debug mode — no output in release builds.
     if (kDebugMode) {
-      // Using debugPrint (not developer.log) ensures output is always
-      // visible in the IDE console and `flutter run` terminal.
-      debugPrint('');
-      debugPrint('══════ API Hawk: $label ══════');
-      debugPrint(text);
-      debugPrint('══════════════════════════════');
-      debugPrint('');
+      stdout.writeln('');
+      stdout.writeln('══════ API Hawk: $label ══════');
+      stdout.writeln(text);
+      stdout.writeln('══════════════════════════════');
+      stdout.writeln('');
+    }
+
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+    } catch (_) {
+      // Clipboard can fail on iOS simulator — ignore silently.
     }
 
     if (!context.mounted) return;

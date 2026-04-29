@@ -79,6 +79,12 @@ class HawkDioInterceptor extends Interceptor {
     if (callId != null) {
       final call = _store.findCallById(callId);
       if (call != null) {
+        // Re-read headers from the final requestOptions so that headers
+        // added by later interceptors (auth tokens, etc.) are captured.
+        call.request?.headers = Map<String, dynamic>.from(
+          response.requestOptions.headers,
+        );
+
         call
           ..loading = false
           ..response = HawkHttpResponse(
@@ -104,6 +110,11 @@ class HawkDioInterceptor extends Interceptor {
     if (callId != null) {
       final call = _store.findCallById(callId);
       if (call != null) {
+        // Re-read headers from the final requestOptions.
+        call.request?.headers = Map<String, dynamic>.from(
+          err.requestOptions.headers,
+        );
+
         call
           ..loading = false
           ..error = HawkHttpError(
