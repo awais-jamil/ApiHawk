@@ -13,16 +13,29 @@ class CopyActionSheet extends StatelessWidget {
   const CopyActionSheet({
     super.key,
     required this.call,
+    required this.scaffoldMessenger,
   });
 
   final HawkHttpCall call;
 
+  /// The [ScaffoldMessengerState] from the parent screen, captured before
+  /// opening the bottom sheet. Used to show the snackbar on the correct
+  /// messenger after the bottom sheet is popped.
+  final ScaffoldMessengerState scaffoldMessenger;
+
   /// Shows this sheet as a modal bottom sheet.
+  ///
+  /// Captures the parent [ScaffoldMessengerState] so copy actions can show
+  /// snackbars on the detail screen even after the sheet is dismissed.
   static Future<void> show(BuildContext context, HawkHttpCall call) {
+    final messenger = ScaffoldMessenger.of(context);
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => CopyActionSheet(call: call),
+      builder: (_) => CopyActionSheet(
+        call: call,
+        scaffoldMessenger: messenger,
+      ),
     );
   }
 
@@ -166,7 +179,12 @@ class CopyActionSheet extends StatelessWidget {
     String label,
   ) async {
     Navigator.of(context).pop();
-    await CopyHelper.copy(context: context, text: text, label: label);
+    await CopyHelper.copy(
+      context: context,
+      text: text,
+      label: label,
+      messenger: scaffoldMessenger,
+    );
   }
 }
 

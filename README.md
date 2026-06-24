@@ -6,6 +6,16 @@ Capture, search, and inspect network calls with a clean dark UI. Copy exactly wh
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## Features
+
+- 🔌 **Multi-client support** — Dio 5.x, http 1.x, Chopper 8.x, Retrofit, or any custom client
+- 🔍 **Search & filter** — search by URL, filter by HTTP method
+- 🌳 **Collapsible JSON viewer** — syntax-highlighted tree with expand/collapse and raw toggle
+- 📋 **Granular copy** — copy URL, headers, body, cURL, or full call log individually
+- 🖥️ **Debug console logging** — copied text is printed to the console in debug mode (iOS simulator clipboard workaround)
+- ⚡ **In-memory only** — no database, no disk writes, no extra permissions
+- 🎨 **Dark themed UI** — GitHub-dark inspired design
+
 ## Why?
 
 Most inspector packages are either unmaintained ([flutter_alice](https://pub.dev/packages/flutter_alice)), too heavy on dependencies ([chucker_flutter](https://pub.dev/packages/chucker_flutter)), or lock you into a single HTTP client.
@@ -16,9 +26,7 @@ API Hawk works with the three most popular Flutter HTTP clients out of the box, 
 
 ```yaml
 dependencies:
-  api_hawk:
-    git:
-      url: https://github.com/awais-jamil/ApiHawk.git
+  api_hawk: ^1.0.4
 ```
 
 ## Setup
@@ -258,6 +266,26 @@ There's a dedicated cURL button in the app bar for quick access — no need to o
 
 ---
 
+## Debug Console Logging
+
+In **debug mode** (`kDebugMode`), every copy action also prints the copied content to the debug console using `dart:io` `stdout`. This is especially useful when running on the **iOS simulator**, where the system clipboard often doesn't sync with the host macOS clipboard.
+
+When you copy something, you'll see output like this in your terminal:
+
+```
+══════ API Hawk: cURL command ══════
+curl -X GET 'https://api.example.com/users' -H 'Authorization: Bearer ...'
+══════════════════════════════════════
+```
+
+You can select and copy the text directly from your IDE's debug console.
+
+Additionally, the copy snackbar shows a **VIEW** button (debug mode only) that opens a dialog with the full copied text as selectable text — another way to grab content when the clipboard doesn't cooperate.
+
+> **Note:** Console logging and the VIEW button are automatically disabled in release builds.
+
+---
+
 ## JSON Viewer
 
 Response and request bodies are displayed as a collapsible tree with syntax highlighting. Keys, strings, numbers, booleans, and nulls each have their own color. You can switch between tree view and raw JSON with a toggle.
@@ -271,6 +299,9 @@ Nodes deeper than level 2 are collapsed by default to keep things readable. Tap 
 ```dart
 // keep more calls in memory (default is 200)
 final hawk = HawkInspector(maxCalls: 1000);
+
+// use a navigator key for overlay-safe navigation
+final hawk = HawkInspector(navigatorKey: navigatorKey);
 
 // clear all captured calls
 hawk.clear();
@@ -296,6 +327,16 @@ hawk.dispose();
 | Retrofit | via Dio interceptor |
 | GraphQL (dio-based) | via Dio interceptor |
 | Anything else | `logRequest` / `logResponse` / `logError` |
+
+## Requirements
+
+| Dependency | Version |
+|---|---|
+| Dart SDK | `>=3.0.0 <4.0.0` |
+| Flutter SDK | `>=3.10.0` |
+| Dio | `>=5.0.0 <6.0.0` |
+| http | `>=1.0.0 <2.0.0` |
+| Chopper | `>=8.0.0 <9.0.0` |
 
 ## Contributing
 

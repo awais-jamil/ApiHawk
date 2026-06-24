@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io' show stdout;
 
 import 'package:flutter/foundation.dart';
@@ -13,21 +14,33 @@ class CopyHelper {
   /// Copies [text] to the clipboard and shows a snackbar with [label].
   ///
   /// If the [context] is no longer mounted, fails silently.
+  ///
+  /// An optional [messenger] can be provided to show the snackbar on a
+  /// specific [ScaffoldMessengerState] — useful when the calling context
+  /// may become unmounted (e.g. after popping a bottom sheet).
   static Future<void> copy({
     required BuildContext context,
     required String text,
     required String label,
+    ScaffoldMessengerState? messenger,
   }) async {
     // Log to console FIRST (before clipboard, which can throw on simulator).
-    // Uses dart:io stdout directly to bypass runZonedGuarded / custom zones
-    // that swallow print(), debugPrint(), and developer.log().
+    // Two output channels cover all environments:
+    //  • developer.log  → Android Studio Run tab, VS Code Debug Console
+    //  • stdout.writeln  → terminal `flutter run`
+    // Both bypass runZonedGuarded zones that can swallow print()/debugPrint().
     // Only in debug mode — no output in release builds.
     if (kDebugMode) {
-      stdout.writeln('');
-      stdout.writeln('══════ API Hawk: $label ══════');
-      stdout.writeln(text);
-      stdout.writeln('══════════════════════════════');
-      stdout.writeln('');
+      final logBlock = '\n'
+          '══════ API Hawk: $label ══════\n'
+          '$text\n'
+          '══════════════════════════════\n';
+
+      // VM service protocol — shows in Android Studio & VS Code.
+      developer.log(logBlock, name: 'ApiHawk');
+
+      // Raw stdout — shows in terminal `flutter run`.
+      stdout.writeln(logBlock);
     }
 
     try {
@@ -36,9 +49,20 @@ class CopyHelper {
       // Clipboard can fail on iOS simulator — ignore silently.
     }
 
-    if (!context.mounted) return;
+    // Determine the ScaffoldMessenger to use for the snackbar.
+    // Prefer the explicitly passed messenger (e.g. from a bottom sheet that
+    // captured the detail screen's messenger before popping). Fall back to
+    // looking up from context if still mounted.
+    final ScaffoldMessengerState? effectiveMessenger;
+    if (messenger != null && messenger.mounted) {
+      effectiveMessenger = messenger;
+    } else if (context.mounted) {
+      effectiveMessenger = ScaffoldMessenger.of(context);
+    } else {
+      return;
+    }
 
-    ScaffoldMessenger.of(context)
+    effectiveMessenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
@@ -64,7 +88,10 @@ class CopyHelper {
               ? SnackBarAction(
                   label: 'VIEW',
                   textColor: Colors.cyanAccent,
-                  onPressed: () => _showTextDialog(context, label, text),
+                  onPressed: () {
+                    if (!context.mounted) return;
+                    _showTextDialog(context, label, text);
+                  },
                 )
               : null,
         ),
@@ -77,6 +104,7 @@ class CopyHelper {
     String label,
     String text,
   ) {
+    if (!context.mounted) return;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(

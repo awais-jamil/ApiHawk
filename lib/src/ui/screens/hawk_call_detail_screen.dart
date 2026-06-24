@@ -43,8 +43,27 @@ class HawkCallDetailScreen extends StatelessWidget {
   }
 }
 
+/// Wraps the detail content with a scoped [ScaffoldMessenger] so that
+/// snackbars are automatically dismissed when the user navigates away
+/// from this screen.
 class _DetailScaffold extends StatelessWidget {
   const _DetailScaffold({required this.call});
+
+  final HawkHttpCall call;
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaffoldMessenger(
+      child: _DetailBody(call: call),
+    );
+  }
+}
+
+/// The actual detail screen content, built below the scoped
+/// [ScaffoldMessenger] so that [ScaffoldMessenger.of(context)] finds
+/// the screen-local messenger instead of the root one.
+class _DetailBody extends StatelessWidget {
+  const _DetailBody({required this.call});
 
   final HawkHttpCall call;
 

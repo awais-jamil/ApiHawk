@@ -22,15 +22,21 @@ class RequestTab extends StatelessWidget {
 
     final theme = Theme.of(context);
 
+    // Filter out content-length — it's noise in the request headers.
+    final displayHeaders = Map<String, dynamic>.from(req.headers)
+      ..removeWhere(
+        (key, _) => key.toLowerCase() == 'content-length',
+      );
+
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
         // Headers section
         _SectionHeader(
-          title: 'Headers (${req.headers.length})',
+          title: 'Headers (${displayHeaders.length})',
           onCopy: () => CopyHelper.copy(
             context: context,
-            text: CallFormatter.formatHeaders(req.headers),
+            text: CallFormatter.formatHeaders(displayHeaders),
             label: 'Request headers',
           ),
         ),
@@ -43,7 +49,7 @@ class RequestTab extends StatelessWidget {
             ),
           ),
           child: HeaderTable(
-            headers: req.headers,
+            headers: displayHeaders,
             title: 'headers',
           ),
         ),

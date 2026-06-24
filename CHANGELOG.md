@@ -1,3 +1,14 @@
+## 1.0.4
+
+- Fix: Snackbar/toast no longer persists when navigating away from API Hawk screens (scoped ScaffoldMessenger)
+- Fix: VIEW button crash on stale context — added mounted guard before showing dialog
+- Fix: Copy action sheet now correctly shows snackbar on the detail screen after bottom sheet dismissal
+- Fix: Console log now uses `dart:developer` log alongside `stdout` for Android Studio Run tab visibility
+- UI: Failed API calls (4xx, 5xx, network errors) now show red/purple-tinted card backgrounds with colored borders
+- UI: Small error/wifi-off icon added to failed call list items for visual clarity
+- Hidden `content-length` from request headers tab (redundant noise)
+- Updated README with pub.dev installation, features list, and debug console documentation
+
 ## 1.0.3
 
 - Fix: JSON tree viewer horizontal overflow on deeply nested objects — now scrollable sideways
