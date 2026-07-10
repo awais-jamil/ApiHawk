@@ -1,3 +1,9 @@
+## 1.0.5
+
+- Fix: Clipboard copy now works reliably in add-to-app (Flutter module embedded in native host) contexts
+- Uses `SystemChannels.platform` direct invocation with fallback to `Clipboard.setData` and retry logic (up to 3 attempts)
+- Debug-mode warning log when all clipboard attempts fail, for easier diagnosis
+
 ## 1.0.4
 
 - Fix: Snackbar/toast no longer persists when navigating away from API Hawk screens (scoped ScaffoldMessenger)

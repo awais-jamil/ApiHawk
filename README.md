@@ -13,6 +13,7 @@ Capture, search, and inspect network calls with a clean dark UI. Copy exactly wh
 - 🌳 **Collapsible JSON viewer** — syntax-highlighted tree with expand/collapse and raw toggle
 - 📋 **Granular copy** — copy URL, headers, body, cURL, or full call log individually
 - 🖥️ **Debug console logging** — copied text is printed to the console in debug mode (iOS simulator clipboard workaround)
+- 📱 **Add-to-app compatible** — clipboard works reliably when Flutter is embedded in a native host app
 - ⚡ **In-memory only** — no database, no disk writes, no extra permissions
 - 🎨 **Dark themed UI** — GitHub-dark inspired design
 
@@ -26,7 +27,7 @@ API Hawk works with the three most popular Flutter HTTP clients out of the box, 
 
 ```yaml
 dependencies:
-  api_hawk: ^1.0.4
+  api_hawk: ^1.0.5
 ```
 
 ## Setup

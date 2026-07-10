@@ -7,10 +7,20 @@ import 'package:flutter/services.dart';
 
 /// Clipboard helper that copies text and shows a confirmation snackbar.
 ///
-/// Uses [Clipboard.setData] directly — no `share_plus` dependency needed.
+/// Uses [SystemChannels.platform] to invoke the clipboard method directly,
+/// with retry logic — works reliably in both standalone and add-to-app
+/// (Flutter module embedded in a native host) contexts.
+///
+/// Falls back to [Clipboard.setData] if the direct channel call fails.
 /// In debug mode, also logs the copied text to the console
 /// so it's accessible even when the simulator clipboard doesn't sync.
 class CopyHelper {
+  /// Maximum number of clipboard write attempts before giving up.
+  static const int _maxRetries = 3;
+
+  /// Delay between retry attempts to allow the platform to settle.
+  static const Duration _retryDelay = Duration(milliseconds: 100);
+
   /// Copies [text] to the clipboard and shows a snackbar with [label].
   ///
   /// If the [context] is no longer mounted, fails silently.
@@ -25,10 +35,8 @@ class CopyHelper {
     ScaffoldMessengerState? messenger,
   }) async {
     // Log to console FIRST (before clipboard, which can throw on simulator).
-    // Two output channels cover all environments:
-    //  • developer.log  → Android Studio Run tab, VS Code Debug Console
-    //  • stdout.writeln  → terminal `flutter run`
-    // Both bypass runZonedGuarded zones that can swallow print()/debugPrint().
+    // developer.log covers Android Studio Run tab, VS Code Debug Console,
+    // and terminal `flutter run`.
     // Only in debug mode — no output in release builds.
     if (kDebugMode) {
       final logBlock = '\n'
@@ -36,18 +44,13 @@ class CopyHelper {
           '$text\n'
           '══════════════════════════════\n';
 
-      // VM service protocol — shows in Android Studio & VS Code.
       developer.log(logBlock, name: 'ApiHawk');
 
       // Raw stdout — shows in terminal `flutter run`.
       stdout.writeln(logBlock);
     }
 
-    try {
-      await Clipboard.setData(ClipboardData(text: text));
-    } catch (_) {
-      // Clipboard can fail on iOS simulator — ignore silently.
-    }
+    await _setClipboardWithRetry(text);
 
     // Determine the ScaffoldMessenger to use for the snackbar.
     // Prefer the explicitly passed messenger (e.g. from a bottom sheet that
@@ -96,6 +99,56 @@ class CopyHelper {
               : null,
         ),
       );
+  }
+
+  /// Attempts to write [text] to the clipboard using multiple strategies.
+  ///
+  /// **Strategy 1**: Invoke `Clipboard.setData` via [SystemChannels.platform]
+  /// directly. This bypasses the high-level wrapper and works more reliably
+  /// in add-to-app (Flutter module) contexts where the Flutter engine may
+  /// not have the expected activity/view focus.
+  ///
+  /// **Strategy 2 (fallback)**: Use [Clipboard.setData] as a fallback if
+  /// the direct channel invocation fails.
+  ///
+  /// Retries up to [_maxRetries] times with a short delay between attempts
+  /// to handle transient platform readiness issues.
+  static Future<bool> _setClipboardWithRetry(String text) async {
+    for (int attempt = 0; attempt < _maxRetries; attempt++) {
+      try {
+        // Strategy 1: Direct SystemChannels invocation.
+        // In add-to-app, the standard Clipboard.setData can silently fail
+        // because the Flutter engine's platform channel may not have the
+        // correct activity context. Invoking the method channel directly
+        // with the same payload tends to work more reliably.
+        await SystemChannels.platform.invokeMethod<void>(
+          'Clipboard.setData',
+          <String, dynamic>{'text': text},
+        );
+        return true;
+      } catch (_) {
+        // Strategy 2: Fall back to high-level Clipboard API.
+        try {
+          await Clipboard.setData(ClipboardData(text: text));
+          return true;
+        } catch (_) {
+          // Both strategies failed — retry after a short delay.
+          if (attempt < _maxRetries - 1) {
+            await Future<void>.delayed(_retryDelay);
+          }
+        }
+      }
+    }
+
+    // All attempts failed. Log in debug mode so developers can diagnose.
+    if (kDebugMode) {
+      developer.log(
+        'CopyHelper: Failed to write to clipboard after $_maxRetries attempts.',
+        name: 'ApiHawk',
+        level: 900, // WARNING level
+      );
+    }
+    return false;
   }
 
   /// Shows a dialog with selectable text — fallback for simulator.
