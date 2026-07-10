@@ -1,3 +1,9 @@
+## 1.0.6
+
+- Fix: Clipboard operations now have timeout protection (500ms) to prevent indefinite hanging in add-to-app contexts where the platform channel may not respond
+- Fix: Clipboard write always executes regardless of widget lifecycle state — previously could be skipped if context was unmounted
+- Improved debug logging: each failed clipboard attempt is now logged individually for easier diagnosis
+
 ## 1.0.5
 
 - Fix: Clipboard copy now works reliably in add-to-app (Flutter module embedded in native host) contexts

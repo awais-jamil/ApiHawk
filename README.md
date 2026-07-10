@@ -27,7 +27,7 @@ API Hawk works with the three most popular Flutter HTTP clients out of the box, 
 
 ```yaml
 dependencies:
-  api_hawk: ^1.0.5
+  api_hawk: ^1.0.6
 ```
 
 ## Setup

@@ -21,6 +21,10 @@ class CopyHelper {
   /// Delay between retry attempts to allow the platform to settle.
   static const Duration _retryDelay = Duration(milliseconds: 100);
 
+  /// Timeout for each clipboard write attempt. Prevents indefinite hanging
+  /// in add-to-app when the platform channel doesn't respond.
+  static const Duration _clipboardTimeout = Duration(milliseconds: 500);
+
   /// Copies [text] to the clipboard and shows a snackbar with [label].
   ///
   /// If the [context] is no longer mounted, fails silently.
@@ -50,8 +54,12 @@ class CopyHelper {
       stdout.writeln(logBlock);
     }
 
+    // ALWAYS attempt clipboard — even if context is dead.
+    // In add-to-app, the context/messenger can become unmounted after
+    // Navigator.pop(), but the clipboard should still work.
     await _setClipboardWithRetry(text);
 
+    // Snackbar is best-effort. If context/messenger is dead, skip silently.
     // Determine the ScaffoldMessenger to use for the snackbar.
     // Prefer the explicitly passed messenger (e.g. from a bottom sheet that
     // captured the detail screen's messenger before popping). Fall back to
@@ -62,6 +70,7 @@ class CopyHelper {
     } else if (context.mounted) {
       effectiveMessenger = ScaffoldMessenger.of(context);
     } else {
+      // Clipboard already done above — just skip the snackbar.
       return;
     }
 
@@ -101,41 +110,31 @@ class CopyHelper {
       );
   }
 
-  /// Attempts to write [text] to the clipboard using multiple strategies.
+  /// Attempts to write [text] to the clipboard with timeout protection.
   ///
-  /// **Strategy 1**: Invoke `Clipboard.setData` via [SystemChannels.platform]
-  /// directly. This bypasses the high-level wrapper and works more reliably
-  /// in add-to-app (Flutter module) contexts where the Flutter engine may
-  /// not have the expected activity/view focus.
-  ///
-  /// **Strategy 2 (fallback)**: Use [Clipboard.setData] as a fallback if
-  /// the direct channel invocation fails.
+  /// In add-to-app contexts, the platform channel can hang indefinitely if
+  /// the native host hasn't registered a clipboard handler. Each attempt
+  /// times out after [_clipboardTimeout] to prevent blocking the UI.
   ///
   /// Retries up to [_maxRetries] times with a short delay between attempts
   /// to handle transient platform readiness issues.
   static Future<bool> _setClipboardWithRetry(String text) async {
     for (int attempt = 0; attempt < _maxRetries; attempt++) {
       try {
-        // Strategy 1: Direct SystemChannels invocation.
-        // In add-to-app, the standard Clipboard.setData can silently fail
-        // because the Flutter engine's platform channel may not have the
-        // correct activity context. Invoking the method channel directly
-        // with the same payload tends to work more reliably.
-        await SystemChannels.platform.invokeMethod<void>(
-          'Clipboard.setData',
-          <String, dynamic>{'text': text},
-        );
+        await Clipboard.setData(ClipboardData(text: text))
+            .timeout(_clipboardTimeout);
         return true;
-      } catch (_) {
-        // Strategy 2: Fall back to high-level Clipboard API.
-        try {
-          await Clipboard.setData(ClipboardData(text: text));
-          return true;
-        } catch (_) {
-          // Both strategies failed — retry after a short delay.
-          if (attempt < _maxRetries - 1) {
-            await Future<void>.delayed(_retryDelay);
-          }
+      } catch (e) {
+        if (kDebugMode) {
+          developer.log(
+            'CopyHelper: Clipboard attempt ${attempt + 1}/$_maxRetries '
+            'failed: $e',
+            name: 'ApiHawk',
+          );
+        }
+        // Retry after a short delay.
+        if (attempt < _maxRetries - 1) {
+          await Future<void>.delayed(_retryDelay);
         }
       }
     }
