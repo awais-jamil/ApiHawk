@@ -1,3 +1,7 @@
+## 1.0.7
+
+- UI: Endpoint path and server URL in the call list now wrap to multiple lines instead of truncating with an ellipsis. Added auto-resizing text if the endpoint is very long.
+
 ## 1.0.6
 
 - Fix: Clipboard operations now have timeout protection (500ms) to prevent indefinite hanging in add-to-app contexts where the platform channel may not respond

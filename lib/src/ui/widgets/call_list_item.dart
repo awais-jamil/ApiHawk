@@ -3,6 +3,7 @@ import 'package:api_hawk/src/ui/theme/hawk_theme.dart';
 import 'package:api_hawk/src/ui/widgets/method_badge.dart';
 import 'package:api_hawk/src/ui/widgets/status_badge.dart';
 import 'package:api_hawk/src/utils/call_formatter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 /// A single row in the call list representing one HTTP call.
@@ -72,7 +73,7 @@ class CallListItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    AutoSizeText(
                       call.displayPath,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
@@ -80,7 +81,8 @@ class CallListItem extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         fontFamily: 'monospace',
                       ),
-                      maxLines: 1,
+                      maxLines: 3,
+                      minFontSize: 8,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 3),
@@ -104,8 +106,6 @@ class CallListItem extends StatelessWidget {
                               color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 11,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
