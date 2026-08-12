@@ -22,8 +22,8 @@ void main() {
     await Future<void>.delayed(const Duration(seconds: 1));
     await binding.takeScreenshot('list_view_1');
 
-    // Tap the specific list item
-    await tester.tap(find.text('/v1/catalog/items/fetch?activeOnly=false').first);
+    // Tap the specific list item (path only)
+    await tester.tap(find.text('/v1/catalog/items/fetch').first);
     await tester.pumpAndSettle();
 
     await Future<void>.delayed(const Duration(seconds: 1));
