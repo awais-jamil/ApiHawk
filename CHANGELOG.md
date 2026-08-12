@@ -1,3 +1,14 @@
+## 1.0.9
+
+- UI: Added automated, beautiful native iOS screenshots to README using `integration_test`
+- Fix: Addressed layout overflow issues in the example app on specific iOS device safe areas
+
+## 1.0.8
+
+- CI/CD: Automated releases and tags via GitHub Actions (`flutter.yml`) and `release.sh`
+- Tests: Added comprehensive unit tests for `HawkStore` and `CurlGenerator` to ensure robustness
+- Example: Improved dummy data generation utility for crisp documentation screenshots
+
 ## 1.0.7
 
 - UI: Endpoint path and server URL in the call list now wrap to multiple lines instead of truncating with an ellipsis. Added auto-resizing text if the endpoint is very long.
