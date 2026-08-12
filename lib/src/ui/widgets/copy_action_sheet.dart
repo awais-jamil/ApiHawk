@@ -91,8 +91,7 @@ class CopyActionSheet extends StatelessWidget {
             ),
 
             // Request Headers
-            if (call.request != null &&
-                call.request!.headers.isNotEmpty)
+            if (call.request != null && call.request!.headers.isNotEmpty)
               _CopyTile(
                 icon: Icons.arrow_upward_rounded,
                 label: 'Copy Request Headers',
@@ -116,8 +115,7 @@ class CopyActionSheet extends StatelessWidget {
               ),
 
             // Response Headers
-            if (call.response != null &&
-                call.response!.headers.isNotEmpty)
+            if (call.response != null && call.response!.headers.isNotEmpty)
               _CopyTile(
                 icon: Icons.arrow_downward_rounded,
                 label: 'Copy Response Headers',

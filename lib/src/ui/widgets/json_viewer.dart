@@ -277,8 +277,7 @@ class _ExpandableHeader extends StatelessWidget {
             if (!expanded) ...[
               const SizedBox(width: 6),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                 decoration: BoxDecoration(
                   color: Colors.grey.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
@@ -523,9 +522,8 @@ class _ToggleChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: selected
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey,
+            color:
+                selected ? Theme.of(context).colorScheme.primary : Colors.grey,
           ),
         ),
       ),

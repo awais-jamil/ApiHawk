@@ -49,8 +49,7 @@ class HawkInspector {
   final GlobalKey<NavigatorState>? navigatorKey;
 
   final HawkStore _store;
-  late final HawkDioInterceptor _dioInterceptor =
-      HawkDioInterceptor(_store);
+  late final HawkDioInterceptor _dioInterceptor = HawkDioInterceptor(_store);
   late final HawkChopperInterceptor _chopperInterceptor =
       HawkChopperInterceptor(_store);
 
@@ -69,8 +68,7 @@ class HawkInspector {
   /// final client = hawk.httpClient(http.Client());
   /// final response = await client.get(Uri.parse('https://...'));
   /// ```
-  HawkHttpClient httpClient(http.Client inner) =>
-      HawkHttpClient(inner, _store);
+  HawkHttpClient httpClient(http.Client inner) => HawkHttpClient(inner, _store);
 
   /// Chopper interceptor. Add to your [ChopperClient]:
   /// ```dart
@@ -107,7 +105,8 @@ class HawkInspector {
     final call = HawkHttpCall(_store.nextId)
       ..method = method.toUpperCase()
       ..endpoint = uri.path
-      ..server = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}'
+      ..server =
+          '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}'
       ..uri = url
       ..secure = uri.scheme == 'https'
       ..loading = true

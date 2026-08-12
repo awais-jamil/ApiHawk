@@ -124,8 +124,7 @@ class _HawkInspectorScreenState extends State<HawkInspectorScreen> {
             // Search + filters
             HawkSearchBar(
               onSearchChanged: (q) => setState(() => _searchQuery = q),
-              onMethodFilterChanged: (m) =>
-                  setState(() => _methodFilter = m),
+              onMethodFilterChanged: (m) => setState(() => _methodFilter = m),
               selectedMethod: _methodFilter,
             ),
             const Divider(height: 1),

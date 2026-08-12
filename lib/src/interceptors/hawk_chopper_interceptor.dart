@@ -48,7 +48,8 @@ class HawkChopperInterceptor implements chopper.Interceptor {
     final call = HawkHttpCall(callId)
       ..method = request.method
       ..endpoint = uri.path + (uri.hasQuery ? '?${uri.query}' : '')
-      ..server = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}'
+      ..server =
+          '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}'
       ..uri = uri.toString()
       ..secure = uri.scheme == 'https'
       ..loading = true

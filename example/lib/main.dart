@@ -43,10 +43,11 @@ class ExampleHomePage extends StatelessWidget {
         title: const Text('🦅 API Hawk — Example'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _SectionTitle(text: 'Dio (Built-in Interceptor)'),
             const SizedBox(height: 8),
@@ -136,8 +137,7 @@ class ExampleHomePage extends StatelessWidget {
               color: Colors.purpleAccent,
               onTap: () => _generateScreenshotData(context),
             ),
-
-            const Spacer(),
+            const SizedBox(height: 24),
 
             // 3. Open the inspector UI
             FilledButton.icon(
@@ -157,6 +157,7 @@ class ExampleHomePage extends StatelessWidget {
             const SizedBox(height: 8),
           ],
         ),
+      ),
       ),
     );
   }
@@ -298,13 +299,13 @@ void _generateScreenshotData(BuildContext context) {
     final callId = hawk.logRequest(
       method: data['method'] as String,
       url: data['url'] as String,
-      headers: data['headers'] as Map<String, String>,
+      headers: (data['headers'] as Map).cast<String, String>(),
     );
 
     hawk.logResponse(
       callId: callId,
       statusCode: data['statusCode'] as int,
-      headers: data['headers'] as Map<String, String>,
+      headers: (data['headers'] as Map).cast<String, String>(),
       body: data['body'],
     );
     
