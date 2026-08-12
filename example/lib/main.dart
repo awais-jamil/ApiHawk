@@ -129,6 +129,13 @@ class ExampleHomePage extends StatelessWidget {
               color: HawkColors.methodOther,
               onTap: () => _logManualCall(context),
             ),
+            const SizedBox(height: 8),
+            _ActionButton(
+              icon: Icons.camera_alt,
+              label: 'Generate Data for Screenshots',
+              color: Colors.purpleAccent,
+              onTap: () => _generateScreenshotData(context),
+            ),
 
             const Spacer(),
 
@@ -230,6 +237,94 @@ void _logManualCall(BuildContext context) {
     ),
   );
 }
+
+/// Injects several beautiful dummy calls into the inspector for clean screenshots.
+void _generateScreenshotData(BuildContext context) {
+  hawk.clear(); // Clear existing calls for a clean slate
+
+  final calls = [
+    {
+      'method': 'POST',
+      'url': 'https://api.myapp.com/v1/catalog/items/fetch?activeOnly=false',
+      'statusCode': 200,
+      'duration': 524,
+      'headers': {
+        'content-type': 'application/json',
+        'authorization': 'Bearer token_abc123...',
+        'x-request-id': 'req-9f8e7d6c',
+      },
+      'body': {'status': 'success', 'items': [{'id': 101, 'name': 'Premium Plan'}]},
+    },
+    {
+      'method': 'GET',
+      'url': 'https://api.myapp.com/v1/users/profile',
+      'statusCode': 200,
+      'duration': 132,
+      'headers': {
+        'content-type': 'application/json',
+        'authorization': 'Bearer token_abc123...',
+      },
+      'body': {'id': 'usr_xyz', 'email': 'developer@myapp.com', 'tier': 'pro'},
+    },
+    {
+      'method': 'POST',
+      'url': 'https://api.myapp.com/v1/orders/checkout',
+      'statusCode': 201,
+      'duration': 890,
+      'headers': {
+        'content-type': 'application/json',
+      },
+      'body': {'orderId': 'ord_12345', 'total': 99.99, 'status': 'processing'},
+    },
+    {
+      'method': 'DELETE',
+      'url': 'https://api.myapp.com/v1/cart/items/42',
+      'statusCode': 204,
+      'duration': 210,
+      'headers': {},
+      'body': null,
+    },
+    {
+      'method': 'GET',
+      'url': 'https://api.myapp.com/v1/config/feature_flags',
+      'statusCode': 200,
+      'duration': 45,
+      'headers': {'content-type': 'application/json'},
+      'body': {'flags': {'new_ui': true, 'beta_access': false}},
+    }
+  ];
+
+  for (final data in calls.reversed) {
+    final callId = hawk.logRequest(
+      method: data['method'] as String,
+      url: data['url'] as String,
+      headers: data['headers'] as Map<String, String>,
+    );
+
+    hawk.logResponse(
+      callId: callId,
+      statusCode: data['statusCode'] as int,
+      headers: data['headers'] as Map<String, String>,
+      body: data['body'],
+    );
+    
+    // Artificially inject duration for realism
+    final call = hawk.store.findCallById(callId);
+    if (call != null) {
+      call.duration = Duration(milliseconds: data['duration'] as int);
+      hawk.store.notifyCallUpdated();
+    }
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('📸 Dummy data generated! Open the inspector to take screenshots.'),
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 3),
+    ),
+  );
+}
+
 
 // ---------------------------------------------------------------------------
 // UI Components

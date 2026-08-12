@@ -4,7 +4,20 @@ A lightweight HTTP inspector for Flutter with built-in support for Dio, http, an
 
 Capture, search, and inspect network calls with a clean dark UI. Copy exactly what you need — a URL, just the response body, headers, or a ready-to-paste cURL command.
 
+[![pub package](https://img.shields.io/pub/v/api_hawk.svg)](https://pub.dev/packages/api_hawk)
+[![likes](https://img.shields.io/pub/likes/api_hawk?logo=dart)](https://pub.dev/packages/api_hawk)
+[![popularity](https://img.shields.io/pub/popularity/api_hawk?logo=dart)](https://pub.dev/packages/api_hawk)
+[![Build Status](https://github.com/awais-jamil/ApiHawk/actions/workflows/flutter.yml/badge.svg)](https://github.com/awais-jamil/ApiHawk/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="screenshots/list_view_1.png" width="22%" />
+  <img src="screenshots/detail_overview.png" width="22%" />
+  <img src="screenshots/detail_request.png" width="22%" />
+  <img src="screenshots/detail_response.png" width="22%" />
+</p>
 
 ## Features
 
