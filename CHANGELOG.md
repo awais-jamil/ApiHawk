@@ -1,3 +1,7 @@
+## 1.0.10
+
+- Docs: Fixed broken Markdown screenshot links on pub.dev and updated README installation version to 1.0.10
+
 ## 1.0.9
 
 - UI: Added automated, beautiful native iOS screenshots to README using `integration_test`
