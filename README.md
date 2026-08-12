@@ -12,12 +12,9 @@ Capture, search, and inspect network calls with a clean dark UI. Copy exactly wh
 
 ## 📸 Screenshots
 
-<p align="center">
-  <img src="screenshots/list_view_1.png" width="22%" />
-  <img src="screenshots/detail_overview.png" width="22%" />
-  <img src="screenshots/detail_request.png" width="22%" />
-  <img src="screenshots/detail_response.png" width="22%" />
-</p>
+| API Hawk List View | Call Overview | Request Details | Response Body |
+|:---:|:---:|:---:|:---:|
+| ![List View](screenshots/list_view_1.png) | ![Overview](screenshots/detail_overview.png) | ![Request](screenshots/detail_request.png) | ![Response](screenshots/detail_response.png) |
 
 ## Features
 
